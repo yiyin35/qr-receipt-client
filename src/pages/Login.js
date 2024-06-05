@@ -13,20 +13,22 @@ function Login() {
 
   const login = () => {
     const data = { userId: userId, password: password };
-    axios.post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/login", data).then((response) => {
-      if (response.data.error) alert(response.data.error);
-      else {
-        localStorage.setItem("accessToken", response.data.token);
-        setAuthState({
-          // username: response.data.username,
-          userId: response.data.userId,
-          role: response.data.role,
-          status: true,
-        });
-        navigate("/"); // direct to home
-        // navigate("/inventoryList"); // direct to inventory list
-      }
-    });
+    axios
+      .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/login", data)
+      .then((response) => {
+        if (response.data.error) alert(response.data.error);
+        else {
+          localStorage.setItem("accessToken", response.data.token);
+          setAuthState({
+            // username: response.data.username,
+            userId: response.data.userId,
+            role: response.data.role,
+            status: true,
+          });
+          navigate("/"); // direct to home
+          // navigate("/inventoryList"); // direct to inventory list
+        }
+      });
   };
 
   return (
@@ -77,12 +79,12 @@ function Login() {
                 </button>
               </div>
 
-              {/* <div className="signUpTextDiv">
+              <div className="signUpTextDiv">
                 <label className="signUpText">Don't have an account? </label>
                 <Link className="signUpText linkText" to="/registration">
                   Sign up
                 </Link>
-              </div> */}
+              </div>
             </div>
           </div>
         ) : (
