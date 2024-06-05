@@ -13,7 +13,7 @@ function CreateAccount() {
   const [listOfUser, setListOfUser] = useState([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("accessToken")) navigate("/login");
+    // if (!localStorage.getItem("accessToken")) navigate("/login");
   }, []);
 
   const initialValues = {
