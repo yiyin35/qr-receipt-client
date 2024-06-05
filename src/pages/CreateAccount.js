@@ -33,7 +33,7 @@ function CreateAccount() {
     // });
 
     axios
-      .get("http://localhost:3001/auth")
+      .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth")
       .then((response) => {
         setListOfUser(response.data);
         checkExistingUser(response.data);
@@ -50,7 +50,7 @@ function CreateAccount() {
       } else {
         data.role = role;
         axios
-          .post("http://localhost:3001/auth/createAcc", data, {
+          .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/createAcc", data, {
             headers: { accessToken: localStorage.getItem("accessToken") },
           })
           .then(() => {

@@ -67,7 +67,7 @@ function Checkout() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get("http://localhost:3001/inventory", {
+        .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory", {
           headers: { accessToken: localStorage.getItem("accessToken") },
         })
         .then((response) => {
@@ -410,10 +410,10 @@ function Checkout() {
     saveTrxToDb(); // 23/3
 
     await axios
-      .post(`http://localhost:3001/pdf/createPdf`, pdfData) // data
+      .post(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/createPdf`, pdfData) // data
       .then(() => {
         axios
-          .get(`http://localhost:3001/pdf/fetchPdf`, { responseType: "blob" })
+          .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/fetchPdf`, { responseType: "blob" })
           .then((res) => {
             const pdfBlob = new Blob([res.data], {
               type: "application/pdf", // data
@@ -446,7 +446,7 @@ function Checkout() {
           })
           .then(() => {
             axios
-              .post(`http://localhost:3001/pdf/sendPdf`, {
+              .post(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/sendPdf`, {
                 email: pdfData.email, // data
                 receiptId: pdfData.receiptId,
                 storeName: retailInfo.storeName,
@@ -488,7 +488,7 @@ function Checkout() {
       // Send the PNG data to the backend to save it
       axios
         .post(
-          `http://localhost:3001/qr/createQr`,
+          `https://qr-receipt-ddba1cd2d186.herokuapp.com/qr/createQr`,
           { imageData: image },
           { responseType: "blob" } // Specify the response type as blob
         )
@@ -527,7 +527,7 @@ function Checkout() {
     };
 
     axios
-      .post("http://localhost:3001/checkout", data, {
+      .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/checkout", data, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {
@@ -559,7 +559,7 @@ function Checkout() {
 
         axios
           .put(
-            `http://localhost:3001/checkout`,
+            `https://qr-receipt-ddba1cd2d186.herokuapp.com/checkout`,
             { barcodeNum: selectedItem.barcodeNum, qty: updatedQuantity },
             {
               headers: { accessToken: localStorage.getItem("accessToken") },

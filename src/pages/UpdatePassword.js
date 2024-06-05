@@ -28,7 +28,7 @@ function UpdatePassword() {
       } else {
         axios
           .put(
-            "http://localhost:3001/auth/updatePassword",
+            "https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/updatePassword",
             {
               oldPassword: oldPassword,
               newPassword: newPassword,

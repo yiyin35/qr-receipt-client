@@ -15,7 +15,7 @@ function Item() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`http://localhost:3001/inventory/byBarcodeNum/${barcodeNum}`)
+        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`)
         .then((response) => {
           setItemObject(response.data);
         });
@@ -36,7 +36,7 @@ function Item() {
     }
 
     axios
-      .delete(`http://localhost:3001/inventory/byBarcodeNum/${id}`, {
+      .delete(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {
@@ -44,7 +44,7 @@ function Item() {
 
         // remove image from server
         axios
-          .delete(`http://localhost:3001/inventory/deleteImage/${imageName}`, {
+          .delete(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/deleteImage/${imageName}`, {
             headers: { accessToken: localStorage.getItem("accessToken") },
           })
           .then(() => {
@@ -87,7 +87,7 @@ function Item() {
                 <div className="itemImageOuterDiv">
                   <div className="itemImageDiv">
                     <img
-                      src={`http://localhost:3001/images/${itemObject.image}`}
+                      src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${itemObject.image}`}
                       alt={`${itemObject.itemName}_Image`}
                       className="itemImage"
                     />

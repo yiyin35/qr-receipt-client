@@ -20,7 +20,7 @@ function TransactionHistory() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get("http://localhost:3001/transactionHistory", {
+        .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/transactionHistory", {
           headers: { accessToken: localStorage.getItem("accessToken") },
         })
         .then((response) => {

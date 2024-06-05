@@ -16,7 +16,7 @@ function Transaction() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`http://localhost:3001/transactionHistory/byTrxId/${trxId}`)
+        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/transactionHistory/byTrxId/${trxId}`)
         .then((response) => {
           setTrxObject(response.data);
           extractItems(response.data.purchasedItemInfo);

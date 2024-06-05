@@ -22,7 +22,7 @@ function CreateInventory() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get("http://localhost:3001/inventory", {
+        .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory", {
           headers: { accessToken: localStorage.getItem("accessToken") },
         })
         .then((response) => {
@@ -70,7 +70,7 @@ function CreateInventory() {
       formData.append(key, value); // Append other form data fields
     });
 
-    axios.post("http://localhost:3001/uploadImage", formData, {
+    axios.post("https://qr-receipt-ddba1cd2d186.herokuapp.com/uploadImage", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         accessToken: localStorage.getItem("accessToken"),
@@ -82,7 +82,7 @@ function CreateInventory() {
     data.updatedBy = authState.userId;
 
     axios
-      .post("http://localhost:3001/inventory", data, {
+      .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory", data, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {

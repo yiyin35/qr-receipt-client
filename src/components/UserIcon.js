@@ -19,7 +19,7 @@ function UserIcon() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/auth/auth", {
+      .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/auth", {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {

@@ -29,7 +29,7 @@ function Registration() {
     // });
 
     axios
-      .get("http://localhost:3001/auth")
+      .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth")
       .then((response) => {
         setListOfUser(response.data);
         checkExistingUser(response.data);
@@ -45,7 +45,7 @@ function Registration() {
         alert("User ID already exists. Please choose a different one.");
       } else {
         data.role = role;
-        axios.post("http://localhost:3001/auth", data).then(() => {
+        axios.post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth", data).then(() => {
           console.log(data); // check
           alert("Your account has been created. Please log in to continue.");
           navigate("/login");

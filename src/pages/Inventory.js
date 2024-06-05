@@ -29,7 +29,7 @@ function Inventory() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get("http://localhost:3001/inventory", {
+        .get("https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory", {
           headers: { accessToken: localStorage.getItem("accessToken") },
         })
         .then((response) => {
@@ -137,7 +137,7 @@ function Inventory() {
                             >
                               <div className="itemImageCardDiv">
                                 <img
-                                  src={`http://localhost:3001/images/${value.image}`}
+                                  src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
                                   alt={`${value.itemName}_Image`}
                                   className="itemImageCard"
                                 />
@@ -192,7 +192,7 @@ function Inventory() {
                                       <td className="itemImgField">
                                         <div className="tableImgDiv">
                                           <img
-                                            src={`http://localhost:3001/images/${value.image}`}
+                                            src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
                                             alt={`${value.itemName}_Image`}
                                             className="itemImg"
                                           />

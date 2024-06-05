@@ -23,7 +23,7 @@ function UpdateItem() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`http://localhost:3001/inventory/byBarcodeNum/${barcodeNum}`)
+        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`)
         .then((response) => {
           setItemObject(response.data);
           setExpiryDate(response.data.expiryDate);
@@ -61,7 +61,7 @@ function UpdateItem() {
 
     axios
       .put(
-        `http://localhost:3001/inventory/byBarcodeNum/${itemObject.barcodeNum}`,
+        `https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${itemObject.barcodeNum}`,
         data,
         {
           headers: { accessToken: localStorage.getItem("accessToken") },
