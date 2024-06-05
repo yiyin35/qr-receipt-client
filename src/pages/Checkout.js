@@ -275,9 +275,17 @@ function Checkout() {
 
   const generateTime = () => {
     const today = new Date();
-    const time = `${String(today.getHours()).padStart(2, "0")}:${String(
-      today.getMinutes()
-    ).padStart(2, "0")}:${String(today.getSeconds()).padStart(2, "0")}`;
+    // const time = `${String(today.getHours()).padStart(2, "0")}:${String(
+    //   today.getMinutes()
+    // ).padStart(2, "0")}:${String(today.getSeconds()).padStart(2, "0")}`;
+
+    const gmtTime = new Date(
+      today.getTime() + (8 * 60 + today.getTimezoneOffset()) * 60000
+    );
+    const hours = String(gmtTime.getHours()).padStart(2, "0");
+    const minutes = String(gmtTime.getMinutes()).padStart(2, "0");
+    const seconds = String(gmtTime.getSeconds()).padStart(2, "0");
+    const time = `${hours}:${minutes}:${seconds}`;
 
     return time;
   };
@@ -410,10 +418,15 @@ function Checkout() {
     saveTrxToDb(); // 23/3
 
     await axios
-      .post(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/createPdf`, pdfData) // data
+      .post(
+        `https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/createPdf`,
+        pdfData
+      ) // data
       .then(() => {
         axios
-          .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/fetchPdf`, { responseType: "blob" })
+          .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/fetchPdf`, {
+            responseType: "blob",
+          })
           .then((res) => {
             const pdfBlob = new Blob([res.data], {
               type: "application/pdf", // data
@@ -446,12 +459,15 @@ function Checkout() {
           })
           .then(() => {
             axios
-              .post(`https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/sendPdf`, {
-                email: pdfData.email, // data
-                receiptId: pdfData.receiptId,
-                storeName: retailInfo.storeName,
-                storeEmail: retailInfo.storeEmail,
-              })
+              .post(
+                `https://qr-receipt-ddba1cd2d186.herokuapp.com/pdf/sendPdf`,
+                {
+                  email: pdfData.email, // data
+                  receiptId: pdfData.receiptId,
+                  storeName: retailInfo.storeName,
+                  storeEmail: retailInfo.storeEmail,
+                }
+              )
               .then((response) => {
                 console.log(response);
                 alert(response.data); // data
