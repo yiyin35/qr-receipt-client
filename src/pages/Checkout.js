@@ -274,18 +274,30 @@ function Checkout() {
   };
 
   const generateTime = () => {
-    const today = new Date();
+    // const today = new Date();
     // const time = `${String(today.getHours()).padStart(2, "0")}:${String(
     //   today.getMinutes()
     // ).padStart(2, "0")}:${String(today.getSeconds()).padStart(2, "0")}`;
 
+    // const gmtTime = new Date(
+    //   today.getTime() + (8 * 60 + today.getTimezoneOffset()) * 60000
+    // );
+    // const hours = String(gmtTime.getHours()).padStart(2, "0");
+    // const minutes = String(gmtTime.getMinutes()).padStart(2, "0");
+    // const seconds = String(gmtTime.getSeconds()).padStart(2, "0");
+    // const time = `${hours}:${minutes}:${seconds}`;
+    // return time;
+
+    const currentDate = new Date();
     const gmtTime = new Date(
-      today.getTime() + (8 * 60 + today.getTimezoneOffset()) * 60000
+      currentDate.getTime() + (8 * 60 + currentDate.getTimezoneOffset()) * 60000
     );
     const hours = String(gmtTime.getHours()).padStart(2, "0");
     const minutes = String(gmtTime.getMinutes()).padStart(2, "0");
     const seconds = String(gmtTime.getSeconds()).padStart(2, "0");
+
     const time = `${hours}:${minutes}:${seconds}`;
+
     return time;
   };
 
