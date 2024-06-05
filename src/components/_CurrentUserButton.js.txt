@@ -1,0 +1,125 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { RiUserStarLine, RiUserLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+
+function CurrentUserButton() {
+  const navigate = useNavigate();
+
+  const [authState, setAuthState] = useState({
+    userId: "",
+    role: "",
+    status: false,
+  });
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/auth/auth", {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then((response) => {
+        if (response.data.error) setAuthState({ ...authState, status: false });
+        else {
+          setAuthState({
+            userId: response.data.userId,
+            role: response.data.role,
+            status: true,
+          });
+        }
+      });
+  }, []);
+
+  const goToProfile = () => {
+    navigate("/profile");
+  };
+
+  return (
+    <div>
+      <div className="dropdownCurrentInDiv" onClick={goToProfile}>
+        <div className="currentInUserIcon">
+          <div className="roleIconDiv1">
+            {authState.role === "Admin" ? (
+              <RiUserStarLine className="roleIcon" />
+            ) : (
+              <RiUserLine className="roleIcon" />
+            )}
+          </div>
+        </div>
+        <div className="currentInUserInfo">
+          <div className="dropdownDisabled disabledTop">{authState.userId}</div>
+          <div className="dropdownDisabled disabledBottom">
+            {authState.role}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CurrentUserButton;
+
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import { RiUserStarLine, RiUserLine } from "react-icons/ri";
+// import { BrowserRouter as useNavigate } from "react-router-dom";
+
+// function CurrentUserButton() {
+//   let navigate = useNavigate();
+
+//   const [authState, setAuthState] = useState({
+//     userId: "",
+//     role: "",
+//     status: false,
+//   });
+//   const [openProfile, setOpenProfile] = useState(false);
+
+//   useEffect(() => {
+//     axios
+//       .get("http://localhost:3001/auth/auth", {
+//         headers: { accessToken: localStorage.getItem("accessToken") },
+//       })
+//       .then((response) => {
+//         if (response.data.error) setAuthState({ ...authState, status: false });
+//         else {
+//           setAuthState({
+//             userId: response.data.userId,
+//             role: response.data.role,
+//             status: true,
+//           });
+//         }
+//       }, []);
+//   });
+
+//   const goToProfile = () => {
+//     navigate("/profile");
+//   };
+
+//   return (
+//     <div>
+//       <div className="dropdownCurrentInDiv" onClick={goToProfile}>
+//         <div className="currentInUserIcon">
+//           <div
+//             className="roleIconDiv1"
+//             onClick={() => {
+//               setOpenProfile(!openProfile);
+//             }}
+//           >
+//             {authState.role === "Admin" ? (
+//               <RiUserStarLine className="roleIcon" />
+//             ) : (
+//               <RiUserLine className="roleIcon" />
+//             )}
+//           </div>
+//         </div>
+//         <div className="currentInUserInfo">
+//           <div className="dropdownDisabled disabledTop">{authState.userId}</div>
+//           <div className="dropdownDisabled disabledBottom">
+//             {authState.role}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default CurrentUserButton;

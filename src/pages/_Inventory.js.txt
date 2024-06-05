@@ -1,0 +1,156 @@
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../helpers/AuthContext";
+import SearchBar from "../components/SearchBar";
+
+export const itemCategory = [
+  "Medications",
+  "Healthcare Products",
+  "Personal Care Products",
+  "Home Health Aids",
+  "Baby and Childcare Products",
+  "Specialty Products",
+];
+
+function Inventory() {
+  const [listOfInventory, setListOfInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState([]);
+  const [searchBy, setSearchBy] = useState(""); // or ("itemName")
+
+  const { authState } = useContext(AuthContext);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    // if (!authState.status)
+    if (!localStorage.getItem("accessToken")) navigate("/login");
+    else {
+      axios
+        .get("http://localhost:3001/inventory", {
+          headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+        .then((response) => {
+          setListOfInventory(response.data);
+          setFilteredInventory(response.data);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    setFilteredInventory(listOfInventory);
+  }, [searchBy]);
+
+  const handleSearchByName = (searchTerm) => {
+    const filtered = listOfInventory.filter((item) =>
+      item.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredInventory(filtered);
+  };
+
+  const handleSearchByBarcode = (searchTerm) => {
+    const filtered = listOfInventory.filter((item) =>
+      item.barcodeNum.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredInventory(filtered);
+  };
+
+  const handleSearch = (searchTerm) => {
+    if (!searchBy) return; // No search type selected
+    const filtered = listOfInventory.filter((item) =>
+      item[searchBy].toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredInventory(filtered);
+  };
+
+  // console.log(filteredInventory); // CHECK
+
+  return (
+    <div className="Inventory">
+      {/* <h2>Inventory List</h2> */}
+
+      <div className="searchDiv">
+        <div className="searchByOuterDiv">
+          <div className="searchByBtnDiv">
+            <button
+              className={
+                searchBy === "itemName"
+                  ? "searchByBtn activeTab"
+                  : searchBy === ""
+                  ? "searchByBtn nonActiveTab"
+                  : "searchByBtn"
+              }
+              onClick={() => {
+                setSearchBy("itemName");
+              }}
+            >
+              Search by Item Name
+            </button>
+            <button
+              className={
+                searchBy === "barcode"
+                  ? "searchByBtn activeTab"
+                  : searchBy === ""
+                  ? "searchByBtn nonActiveTab"
+                  : "searchByBtn"
+              }
+              onClick={() => {
+                setSearchBy("barcode");
+              }}
+            >
+              Search by Barcode
+            </button>
+          </div>
+        </div>
+
+        <div className="searchInputOuter">
+          {searchBy === "itemName" && (
+            <div className="searchInputDiv">
+              {/* <h4>Search by Item Name: </h4> */}
+              <SearchBar handleSearch={handleSearchByName} type={"item name"} />
+            </div>
+          )}
+          {searchBy === "barcode" && (
+            <div className="searchInputDiv">
+              {/* <h4>Search by Barcode: </h4> */}
+              <SearchBar
+                handleSearch={handleSearchByBarcode}
+                type={"barcode"}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {listOfInventory.length === 0 ? (
+        <div className="noRecordContainer">
+          <h4>No inventory items found.</h4>
+          <div>
+            Click <Link to="/addNewItem">here</Link> to add new inventory.
+          </div>
+        </div>
+      ) : (
+        <div className="outerContainer">
+          {/* {listOfInventory.map((value, key) => { */}
+          {filteredInventory.map((value, key) => {
+            return (
+              <div className="itemContainer">
+                <div
+                  className="itemContent"
+                  onClick={() => {
+                    navigate(`/item/${value.barcodeNum}`);
+                  }}
+                >
+                  <div>{value.barcodeNum}</div>
+                  <div>{value.itemName}</div>
+                  <div>RM {parseFloat(value.price).toFixed(2)}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Inventory;

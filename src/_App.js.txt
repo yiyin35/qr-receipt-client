@@ -1,0 +1,132 @@
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
+import Home from "./pages/Home";
+import Inventory from "./pages/Inventory";
+import CreateInventory from "./pages/CreateInventory";
+import Item from "./pages/Item";
+import Login from "./pages/Login";
+import Registration from "./pages/Registration";
+import { AuthContext } from "./helpers/AuthContext";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import PageNotFound from "./pages/PageNotFound";
+import Checkout from "./pages/Checkout";
+import UpdateItem from "./pages/UpdateItem";
+import LogoutButton from "./components/LogoutButton";
+
+function App() {
+  // let navigate = useNavigate();
+
+  const [authState, setAuthState] = useState({
+    username: "",
+    userId: "",
+    status: false,
+  });
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/auth/auth", {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then((response) => {
+        if (response.data.error) setAuthState({ ...authState, status: false });
+        else {
+          setAuthState({
+            username: response.data.username,
+            userId: response.data.userId,
+            status: true,
+          });
+        }
+      });
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    setAuthState({ username: "", userId: "", status: false });
+    // navigate("/login");
+  };
+
+  return (
+    <div className="App">
+      <AuthContext.Provider value={{ authState, setAuthState }}>
+        <Router>
+          <div className="navBar">
+            <div>
+              {authState.status ? (
+                <>
+                  {/* <Link className="navTab" to="/">
+                      Home
+                    </Link> */}
+                  <Link className="navTab" to="/inventoryList">
+                    All Inventories
+                  </Link>
+                  <Link className="navTab" to="/addNewItem">
+                    Create Inventory
+                  </Link>
+                  <Link className="navTab" to="/checkout">
+                    Checkout
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link className="navTab" to="/login">
+                    Login
+                  </Link>
+                  <Link className="navTab" to="/registration">
+                    Create Account
+                  </Link>
+                </>
+              )}
+            </div>
+
+            {authState.status && (
+              <>
+                <div className="userSection">
+                  <h3 className="userIdTitle">{authState.userId}</h3>
+                  <div className="logoutBtnDiv" onClick={logout}>
+                    {/* <button onClick={logout}>Logout</button> */}
+                    <LogoutButton />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <Routes>
+            {/* <Route path="/" exact element={<Home />}></Route> */}
+            <Route path="/" exact element={<Inventory />}></Route>
+            <Route path="/inventoryList" exact element={<Inventory />}></Route>
+            <Route
+              path="/addNewItem"
+              exact
+              element={<CreateInventory />}
+            ></Route>
+            <Route path="/item/:barcodeNum" exact element={<Item />}></Route>
+            <Route path="/login" exact element={<Login />}></Route>
+            <Route
+              path="/registration"
+              exact
+              element={<Registration />}
+            ></Route>
+            <Route path="/checkout" exact element={<Checkout />}></Route>
+            {/* new */}
+            <Route
+              path="/updateItem/:barcodeNum"
+              exact
+              element={<UpdateItem />}
+            ></Route>
+            <Route path="*" exact element={<PageNotFound />}></Route>
+          </Routes>
+        </Router>
+      </AuthContext.Provider>
+    </div>
+  );
+}
+
+export default App;

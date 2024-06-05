@@ -1,0 +1,887 @@
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../helpers/AuthContext";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import DropdownSearchbar from "../components/DropdownSearchbar";
+import QrCode from "../components/QrCode";
+import html2canvas from "html2canvas";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { retailInfo } from "../helpers/RetailStoreDetails";
+
+function Checkout() {
+  const today = new Date();
+  const { authState } = useContext(AuthContext);
+  let navigate = useNavigate();
+
+  // TEST repeated
+  // const [repeated, setRepeated] = useState(false);
+
+  const [listOfInventory, setListOfInventory] = useState([]);
+  const [selectedBarcodeNum, setSelectedBarcodeNum] = useState("");
+  const [selectedItemName, setSelectedItemName] = useState("");
+  const [selectedItemPrice, setSelectedItemPrice] = useState(0.0);
+  const [selectedItemStockQty, setSelectedItemStockQty] = useState(0); // update
+  const [validStock, setValidStock] = useState(true); // update
+  const [qtyDetail, setQtyDetail] = useState({
+    qty: 0,
+    totalPrice: 0.0,
+  });
+  const [checkoutList, setCheckoutList] = useState([]);
+  const [totalReceipt, setTotalReceipt] = useState(0.0);
+  const [image, setImage] = useState("");
+  const [checkoutStatus, setCheckoutStatus] = useState(false);
+  const [pdfInfo, setPdfInfo] = useState({
+    name: "",
+    email: "",
+    date: "",
+    time: "",
+    receiptId: "",
+    cashierName: "",
+    listOfItems: [],
+    totalPrice: 0.0,
+    totalItem: 0,
+    qrImage: "",
+    item1: {},
+    item2: {},
+    item3: {},
+    item4: {},
+    item5: {},
+    item6: {},
+    item7: {},
+    item8: {},
+    item9: {},
+    item10: {},
+  });
+  let pdfData = pdfInfo;
+  const [qrString, setQrString] = useState("");
+  const qrCodeRef = useRef(null);
+
+  useEffect(() => {
+    // if (!authState.status)
+    if (!localStorage.getItem("accessToken")) navigate("/login");
+    else {
+      axios
+        .get("http://localhost:3001/inventory", {
+          headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+        .then((response) => {
+          setListOfInventory(response.data);
+        });
+    }
+  }, []);
+
+  const handleBarcodeSelect = (event) => {
+    const selectedValue = event;
+    // const selectedValue = event.target.value;
+    setSelectedBarcodeNum(selectedValue);
+
+    const selectedItem = listOfInventory.find(
+      (item) => item.barcodeNum === selectedValue
+    );
+    if (selectedItem) {
+      setSelectedItemName(selectedItem.itemName);
+      setSelectedItemPrice(selectedItem.price);
+      setSelectedItemStockQty(selectedItem.quantity);
+      setQtyDetail({
+        qty: 1,
+        totalPrice: selectedItem.price,
+      });
+    }
+  };
+
+  const handleItemSelect = (event) => {
+    const selectedValue = event;
+    // const selectedValue = event.target.value;
+    setSelectedItemName(selectedValue);
+
+    const selectedItem = listOfInventory.find(
+      (item) => item.itemName === selectedValue
+    );
+    if (selectedItem) {
+      setSelectedBarcodeNum(selectedItem.barcodeNum);
+      setSelectedItemPrice(selectedItem.price);
+      setSelectedItemStockQty(selectedItem.quantity);
+      setQtyDetail({
+        qty: 1,
+        totalPrice: selectedItem.price,
+      });
+    }
+  };
+
+  const addToCheckoutList = (barcodeNum) => {
+    const checkoutItem = listOfInventory.find(
+      (item) => item.barcodeNum === barcodeNum
+    );
+
+    // if (checkoutList.length) checkRepeated(barcodeNum); // KIV
+
+    // REMAIN working
+    if (checkoutItem)
+      // if (checkoutItem && !repeated)
+      setCheckoutList([
+        ...checkoutList,
+        {
+          barcodeNum: checkoutItem.barcodeNum,
+          itemName: checkoutItem.itemName,
+          // quantity: checkoutItem.quantity,
+          price: checkoutItem.price,
+          batchNum: checkoutItem.batchNum,
+          category: checkoutItem.category,
+          expiryDate: checkoutItem.expiryDate,
+          totalQty: qtyDetail.qty,
+          totalPrice: qtyDetail.totalPrice,
+        },
+      ]);
+
+    setTotalReceipt(totalReceipt + qtyDetail.totalPrice);
+    setSelectedBarcodeNum("");
+    setSelectedItemName("");
+    setSelectedItemPrice("");
+    setSelectedItemStockQty("");
+    setQtyDetail({ qty: 0, totalPrice: 0 });
+
+    // setRepeated(false); // update state
+  };
+
+  // TEST - KIV
+  // const checkRepeated = (barcodeNum) => {
+  //   const checkoutItem = listOfInventory.find(
+  //     (item) => item.barcodeNum === barcodeNum
+  //   );
+  //   // UPDATE TOTAL CHECKOUT QUANTITY & PRICE FOR SAME ITEM TO REMOVE REDUNDANCY
+  //   if (checkoutList) {
+  //     if (checkoutItem) {
+  //       // console.log(checkoutItem); // check
+
+  //       var repeatCounter = 0;
+  //       for (var i = 0; i < checkoutList.length; i++) {
+  //         if (checkoutItem.barcodeNum === checkoutList[i].barcodeNum) {
+  //           repeatCounter++; // repeatCounter = 1 means 2 records for 1 item
+  //         }
+
+  //         console.log(repeatCounter);
+
+  //         if (repeatCounter > 0) {
+  //           setRepeated(true);
+  //           console.log("REPEATED");
+  //         } else {
+  //           setRepeated(false);
+  //           console.log("NO REPEATED");
+  //         }
+
+  //         if (repeated) {
+  //           var newTotalQty = 0;
+  //           var newTotalPrice = 0;
+  //           for (var c = 0; c < checkoutList.length; c++) {
+  //             if (checkoutItem.barcodeNum === checkoutList[c].barcodeNum) {
+  //               // console.log(checkoutList[c]);
+  //               // console.log(checkoutItem);
+  //               newTotalQty += checkoutList[c].totalQty;
+  //               newTotalPrice += checkoutList[c].totalPrice;
+
+  //               console.log(newTotalQty);
+  //               console.log(newTotalPrice);
+  //             }
+
+  //             // TEST update newTotalQty&Price
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
+
+  const handleInputQty = (event) => {
+    const inputQty = event.target.value;
+    setQtyDetail({ qty: inputQty, totalPrice: selectedItemPrice * inputQty });
+
+    // check checkout qty does not exceed in-stock qty
+    if (inputQty <= selectedItemStockQty) setValidStock(true);
+    else setValidStock(false);
+  };
+
+  const generateDate = () => {
+    const today = new Date();
+    const date = `${today.getDate()}-${
+      today.getMonth() + 1
+    }-${today.getFullYear()}`;
+
+    return date;
+  };
+
+  const generateTime = () => {
+    const today = new Date();
+    const time = `${String(today.getHours()).padStart(2, "0")}:${String(
+      today.getMinutes()
+    ).padStart(2, "0")}:${String(today.getSeconds()).padStart(2, "0")}`;
+
+    return time;
+  };
+
+  const generateReceiptId = () => {
+    const currentDate = new Date(); // Get current date and time
+    const formattedDate = currentDate.toISOString().replace(/[-T:.Z]/g, ""); // Format date and time (YYYYMMDDHHMMSS)
+    const randomNum1 = Math.floor(Math.random() * 100); // Generate a random number between 0 and 99
+    const receiptId = formattedDate + randomNum1;
+
+    return receiptId;
+  };
+
+  const confirmCheckout = () => {
+    setCheckoutStatus(true);
+
+    // const trxDate = "5-3-2024"; // FOR TESTING
+    const trxDate = generateDate();
+    const trxId = generateReceiptId();
+
+    setPdfInfo({
+      ...pdfInfo,
+      date: trxDate,
+      time: generateTime(),
+      receiptId: trxId, // generate string based on date-time-num - todo
+      cashierName: authState.username,
+      listOfItems: checkoutList, // to work on
+      totalPrice: totalReceipt,
+      totalItem: checkoutList.length,
+      item1: checkoutList.length >= 1 ? checkoutList[0] : {},
+      item2: checkoutList.length >= 2 ? checkoutList[1] : {},
+      item3: checkoutList.length >= 3 ? checkoutList[2] : {},
+      item4: checkoutList.length >= 4 ? checkoutList[3] : {},
+      item5: checkoutList.length >= 5 ? checkoutList[4] : {},
+      item6: checkoutList.length >= 6 ? checkoutList[5] : {},
+      item7: checkoutList.length >= 7 ? checkoutList[6] : {},
+      item8: checkoutList.length >= 8 ? checkoutList[7] : {},
+      item9: checkoutList.length >= 9 ? checkoutList[8] : {},
+      item10: checkoutList.length >= 10 ? checkoutList[9] : {},
+    });
+
+    // // all attributes
+    // const allFieldAsString = checkoutList
+    //   .map((value, key) => {
+    //     const itemValues = Object.values(value);
+    //     return itemValues.join(", ");
+    //   })
+    //   .join("\n");
+
+    // selected attributes #1
+    // let num = 0;
+    // const selectedFieldAsString = checkoutList
+    //   .map((value, key) => {
+    //     const { itemNum, itemName, expiryDate } = value;
+    //     num++;
+    //     return `${num}, ${itemName}, ${expiryDate}`;
+    //   })
+    //   .join("\n");
+
+    // selected attributes #2
+    const selectedFieldAsString = checkoutList
+      .map((value, key) => {
+        const { itemName, expiryDate, totalQty, category } = value;
+
+        if (expiryDate === null)
+          return `${itemName}, -, ${totalQty}, ${category}`;
+        else return `${itemName}, ${expiryDate}, ${totalQty}, ${category}`;
+      })
+      .join("\n");
+
+    const completedString =
+      trxDate +
+      "\n" +
+      trxId +
+      "\n" +
+      totalReceipt.toFixed(2) +
+      "\n" +
+      selectedFieldAsString;
+
+    setQrString(completedString);
+  };
+
+  // TO FIX - 25/2 (repeated item only update once)
+  const updateQuantityDB = () => {
+    // const updateQuantityPromises = [];
+
+    checkoutList.forEach((listItem) => {
+      var selectedItem = listOfInventory.find(
+        (item) => item.barcodeNum === listItem.barcodeNum
+      );
+
+      if (selectedItem) {
+        // console.log("selectedItem", selectedItem); // check
+        // console.log("listItem", listItem); // check
+        // console.log(selectedItem.quantity); // check
+        // console.log("checkoutList", checkoutList); // check
+
+        // var newQty = selectedItem.quantity - listItem.totalQty;
+        selectedItem.quantity -= listItem.totalQty;
+
+        // console.log(listItem.totalQty); // check
+        // console.log(newQty); // check
+
+        // const updatePromise = axios
+        axios
+          .put(
+            `http://localhost:3001/checkout`,
+            // { barcodeNum: listItem.barcodeNum, qty: newQty },
+            { barcodeNum: selectedItem.barcodeNum, qty: selectedItem.quantity },
+            {
+              headers: { accessToken: localStorage.getItem("accessToken") },
+            }
+          )
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.error("Error updating quantity:", error);
+          });
+
+        // updateQuantityPromises.push(updatePromise);
+      }
+    });
+
+    // // Execute all quantity update requests simultaneously
+    // Promise.all(updateQuantityPromises)
+    //   .then((responses) => {
+    //     // Handle responses if needed
+    //     console.log("Quantity updated successfully:", responses);
+    //   })
+    //   .catch((error) => {
+    //     // Handle errors if any of the requests fail
+    //     console.error("Error updating quantity:", error);
+    //   });
+  };
+
+  const submitPdfForm = async (e) => {
+    // call to update quantity (deduct checkout) to db
+    // updateQuantityDB(); // TO SOLVE
+
+    e.preventDefault();
+
+    await axios
+      .post(`http://localhost:3001/pdf/createPdf`, pdfData) // data
+      .then(() => {
+        axios
+          .get(`http://localhost:3001/pdf/fetchPdf`, { responseType: "blob" })
+          .then((res) => {
+            const pdfBlob = new Blob([res.data], {
+              type: "application/pdf", // data
+            }); // use file saver to save
+            saveAs(pdfBlob, "InvoiceDocument.pdf");
+
+            // clear state after downloading
+            setPdfInfo({
+              name: "",
+              email: "",
+              date: "",
+              time: "",
+              receiptId: "",
+              cashierName: "",
+              totalPrice: 0.0,
+              qrImage: "",
+              item1: {},
+              item2: {},
+              item3: {},
+              item4: {},
+              item5: {},
+              item6: {},
+              item7: {},
+              item8: {},
+              item9: {},
+              item10: {},
+            });
+            setCheckoutStatus(false);
+          })
+          .then(() => {
+            axios
+              .post(`http://localhost:3001/pdf/sendPdf`, {
+                email: pdfData.email, // data
+                receiptId: pdfData.receiptId,
+                storeName: retailInfo.storeName,
+                storeEmail: retailInfo.storeEmail,
+              })
+              .then((response) => {
+                console.log(response);
+                alert(response.data); // data
+              });
+          });
+      });
+  };
+
+  // VER 1*** - useState issue
+  // const downloadQr = async () => {
+  //   try {
+  //     const qrCodeElement = qrCodeRef.current;
+  //     if (!qrCodeElement) throw new Error("QR code element not found");
+
+  //     const canvas = await html2canvas(qrCodeElement);
+  //     const dataUrl = canvas.toDataURL("image/png");
+
+  //     // TEST
+  //     setImage(dataUrl);
+
+  //     if (image !== "") {
+  //       setPdfInfo({ ...pdfInfo, qrImage: image });
+  //       console.log("Image set!"); // check
+  //     } else console.log("NO image set!");
+
+  //     // Send the PNG data to the backend to save it
+  //     await axios.post(
+  //       `http://localhost:3001/qr/createQr`,
+  //       { imageData: dataUrl },
+  //       { responseType: "blob" } // Specify the response type as blob
+  //     );
+
+  //     console.log("Image file saved to the server");
+  //   } catch (error) {
+  //     console.error("Error generating or saving QR code image:", error.message);
+  //   }
+  // };
+
+  // VER 2*** - workable with download QR button
+  const [isQrImageGenerated, setQrIsImageGenerated] = useState(false);
+
+  const downloadQr = async () => {
+    try {
+      const qrCodeElement = qrCodeRef.current;
+      if (!qrCodeElement) throw new Error("QR code element not found");
+
+      const canvas = await html2canvas(qrCodeElement);
+      const dataUrl = canvas.toDataURL("image/png");
+
+      // Update the image state
+      setImage(dataUrl);
+      setQrIsImageGenerated(true); // Set the flag to true after image generation
+    } catch (error) {
+      console.error("Error generating or saving QR code image:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Check if the image is generated and the pdfInfo is updated
+    if (isQrImageGenerated && image !== "") {
+      // Update the pdfInfo state with the generated image
+      setPdfInfo({ ...pdfInfo, qrImage: image });
+
+      // Send the PNG data to the backend to save it
+      axios
+        .post(
+          `http://localhost:3001/qr/createQr`,
+          { imageData: image },
+          { responseType: "blob" } // Specify the response type as blob
+        )
+        .then(() => {
+          console.log("Image file saved to the server");
+        })
+        .catch((error) => {
+          console.error(
+            "Error saving QR code image to the server:",
+            error.message
+          );
+        });
+
+      // Reset the flag variable to prevent infinite loop
+      setQrIsImageGenerated(false);
+    }
+  }, [isQrImageGenerated, image, pdfInfo]); // Watch for changes in the flag variable, image, and pdfInfo states
+
+  // TRANSACTION table - added on 23/3
+  const saveTrxToDb = () => {
+    const dateParts = pdfData.date.split("-");
+    const formattedDate = `${dateParts[2]}-${parseInt(dateParts[1])}-${
+      dateParts[0]
+    }`;
+    const combinedDateTime = `${formattedDate} ${pdfData.time}`;
+
+    const data = {
+      trxId: pdfData.receiptId,
+      userId: pdfData.cashierName,
+      trxDateTime: combinedDateTime,
+      totalTrxAmount: pdfData.totalPrice,
+      // qrCodeInfo: qrString,
+    };
+
+    axios
+      .post("http://localhost:3001/checkout", data, {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then((response) => {
+        console.log(response); // CHECK
+      });
+  };
+
+  const generateQrAndPdf = (e) => {
+    downloadQr();
+    submitPdfForm(e);
+    saveTrxToDb(); // 23/3
+  };
+
+  const removeFromCheckoutList = (index) => {
+    const updatedCheckoutList = [...checkoutList];
+    updatedCheckoutList.splice(index, 1);
+    setCheckoutList(updatedCheckoutList);
+    setTotalReceipt(totalReceipt - checkoutList[index].totalPrice); // Deduct removed item's price from total receipt
+  };
+
+  return (
+    <div>
+      <h2>Checkout</h2>
+
+      {listOfInventory.length === 0 ? (
+        <div className="noRecordContainer">
+          <h4>No inventory items found for checkout.</h4>
+          <div>
+            Click <Link to="/addNewItem">here</Link> to add new inventory.
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="form">
+            <div className="formContent">
+              <div>
+                <div>
+                  {/* <div className="itemBlock"> */}
+                  {/* <div className="itemDiv"> */}
+                  <div className="itemCard">
+                    {/* ---------- Searchable dropdown ---------- */}
+                    <div className="field">
+                      <label className="fieldLabel">Barcode Number: </label>
+                      <DropdownSearchbar
+                        options={listOfInventory}
+                        id="barcodeNum"
+                        label="barcodeNum"
+                        selectedVal={selectedBarcodeNum}
+                        handleChange={handleBarcodeSelect}
+                        // selectedVal={value} // event.target.value
+                        // handleChange={(val) => setValue(val)} // event.target.value
+                        className="fieldInput inputDropdown"
+                      />
+                    </div>
+
+                    <div className="field">
+                      <label className="fieldLabel">Item Name: </label>
+                      <DropdownSearchbar
+                        options={listOfInventory}
+                        id="barcodeNum"
+                        label="itemName"
+                        selectedVal={selectedItemName}
+                        handleChange={handleItemSelect}
+                        // selectedVal={value} // event.target.value
+                        // handleChange={(val) => setValue(val)} // event.target.value
+                        className="fieldInput"
+                      />
+                    </div>
+                    {/* ---------- Dropdown ---------- */}
+                    {/* <div className="field">
+              <label className="fieldLabel">Barcode Number: </label>
+              <select
+                className="fieldInput"
+                onChange={handleBarcodeSelect}
+                value={selectedBarcodeNum}
+              >
+                <option value="" disabled selected>
+                  -
+                </option>
+                {listOfInventory.map((value, key) => {
+                  return (
+                    <option value={value.barcodeNum}>{value.barcodeNum}</option>
+                  );
+                })}
+              </select>
+            </div>
+            <div className="field">
+              <label className="fieldLabel">Item Name: </label>
+              <select
+                className="fieldInput"
+                onChange={handleItemSelect}
+                value={selectedItemName}
+              >
+                <option value="" disabled selected>
+                  -
+                </option>
+                {listOfInventory.map((value, key) => {
+                  return (
+                    <option value={value.itemName}>{value.itemName}</option>
+                  );
+                })}
+              </select>
+            </div> */}
+
+                    <div className="field">
+                      <label className="fieldLabel">Price:</label>
+                      {selectedItemPrice ? (
+                        <>
+                          <label
+                            className="fieldInput"
+                            value={selectedItemPrice}
+                          >
+                            RM {parseFloat(selectedItemPrice).toFixed(2)}
+                          </label>
+                        </>
+                      ) : (
+                        <>
+                          <label className="fieldInput">-</label>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="field">
+                      <label className="fieldLabel">Quantity:</label>
+                      <input
+                        className="fieldInput inputQty"
+                        type="number"
+                        min={selectedBarcodeNum || selectedItemName ? "1" : "0"}
+                        max={
+                          selectedBarcodeNum || selectedItemName
+                            ? `${selectedItemStockQty}`
+                            : "0"
+                        }
+                        step="1"
+                        value={qtyDetail.qty}
+                        onChange={handleInputQty}
+                        placeholder="0"
+                      />
+                    </div>
+                    {!validStock && (
+                      <div>
+                        <span className="fieldErrMsg">
+                          {selectedItemStockQty} items in stock
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="field">
+                      <label className="fieldLabel">Total Price:</label>
+                      <label className="fieldInput">
+                        {qtyDetail.qty ? (
+                          <>
+                            <label
+                              className="fieldInput"
+                              value={selectedItemPrice}
+                            >
+                              RM {qtyDetail.totalPrice.toFixed(2)}
+                            </label>
+                          </>
+                        ) : (
+                          <>
+                            <label className="fieldInput">-</label>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                {
+                  // (selectedBarcodeNum || selectedItemName) &&
+                  checkoutList.length < 10 && (
+                    <div>
+                      <button
+                        className="submitBtn"
+                        onClick={() => {
+                          qtyDetail.qty > 0 &&
+                            validStock &&
+                            addToCheckoutList(selectedBarcodeNum); // add to list only if qty > 0
+                          setCheckoutStatus(false);
+                        }}
+                        disabled={!selectedBarcodeNum || !selectedItemName}
+                      >
+                        Add to Checkout List
+                      </button>
+                    </div>
+                  )
+                }
+                {(selectedBarcodeNum || selectedItemName) &&
+                  checkoutList.length >= 10 && (
+                    <div>
+                      <span>
+                        *You have reached the maximum limit of 10 checkout
+                        items.*
+                      </span>
+                    </div>
+                  )}
+              </div>
+            </div>
+          </div>
+
+          <br></br>
+          <div>
+            {totalReceipt > 0 && (
+              <div>
+                <h3>
+                  <u>Checkout List</u>
+                </h3>
+                <h4>Total: RM {totalReceipt.toFixed(2)}</h4>
+
+                <div className="itemContainer">
+                  <div className="tableContainer">
+                    <div className="tableWrapper">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th>Barcode No.</th>
+                            <th>Price</th>
+                            <th>Batch No.</th>
+                            <th>Expiry Date</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {checkoutList.map((value, key) => {
+                            return (
+                              <tr>
+                                <td className="tableField">{value.itemName}</td>
+                                <td className="tableField">
+                                  {value.barcodeNum}
+                                </td>
+                                <td className="tableField">
+                                  RM {parseFloat(value.price).toFixed(2)}
+                                </td>
+                                <td className="tableField">{value.batchNum}</td>
+                                <td className="tableField">
+                                  {value.expiryDate === null
+                                    ? "-"
+                                    : value.expiryDate}
+                                </td>
+                                <td className="tableField">{value.totalQty}</td>
+                                <td className="tableField">
+                                  RM {value.totalPrice.toFixed(2)}
+                                </td>
+                                <td className="tableField">
+                                  <div
+                                    onClick={() => removeFromCheckoutList(key)}
+                                  >
+                                    <FaRegTrashAlt />
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <button onClick={confirmCheckout}>Confirm Checkout</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Generate PDF */}
+          <br></br>
+          <br></br>
+
+          {totalReceipt > 0 && checkoutStatus && (
+            <div>
+              <div>
+                {/* <div className="mainBlock"> */}
+                <h3>
+                  <u>Generate & Download PDF</u>
+                </h3>
+
+                <div className="form">
+                  <div className="formContent">
+                    <div>
+                      <div ref={qrCodeRef}>
+                        <QrCode
+                          id="qrcode"
+                          // extract and combine everything as a string
+                          qrInfo={`${qrString}`.toString()} // store only required data
+                          // qrInfo={`Date: ${`${today.getDate()}-${
+                          //   today.getMonth() + 1
+                          // }-${today.getFullYear()}`}\nTotal Price: RM ${
+                          //   pdfData.totalPrice
+                          // }\nItems: ${qrString}\n`.toString()}
+                        />
+                      </div>
+                      {/* <button className="" onClick={downloadQr}>
+                        Download QR
+                      </button> */}
+                    </div>
+
+                    <div className="customerDetailsContainer">
+                      {/* <form onSubmit={submitPdfForm}> */}
+                      <form
+                        onSubmit={(e) => {
+                          generateQrAndPdf(e);
+                        }}
+                      >
+                        <div>
+                          <label className="fieldLabel">Name:</label>
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            name="name"
+                            value={pdfInfo.name}
+                            onChange={(e) => {
+                              setPdfInfo({ ...pdfInfo, name: e.target.value });
+                            }}
+                            required
+                          />
+                          <br></br>
+                          <br></br>
+                          <label className="fieldLabel">Email:</label>
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            name="email"
+                            value={pdfInfo.email}
+                            onChange={(e) => {
+                              setPdfInfo({ ...pdfInfo, email: e.target.value });
+                            }}
+                            required
+                          />
+
+                          {/* <br></br>
+                          <br></br>
+                          <input
+                            type="text"
+                            placeholder="ReceiptID"
+                            name="receipt"
+                            value={pdfInfo.receiptId}
+                            onChange={(e) => {
+                              setPdfInfo({
+                                ...pdfInfo,
+                                receiptId: e.target.value,
+                              });
+                            }}
+                          />
+                          <br></br>
+                          <br></br>
+                          <input
+                            type="text"
+                            placeholder="totalPrice"
+                            name="totalPrice"
+                            value={pdfInfo.totalPrice}
+                            onChange={(e) => {
+                              setPdfInfo({
+                                ...pdfInfo,
+                                totalPrice: e.target.value,
+                              });
+                            }}
+                          /> */}
+                        </div>
+                        {/* <button className="downloadPdfBtn"> */}
+                        <button className="submitBtn">
+                          Download and Send PDF
+                        </button>
+                      </form>
+                    </div>
+                    {/* CHECK display image */}
+                    {/* <div>{image && <img src={image} alt="Generated QR code" />}</div> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export default Checkout;

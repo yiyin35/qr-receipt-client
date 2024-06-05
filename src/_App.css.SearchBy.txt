@@ -1,0 +1,527 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  /* background-color: #f3f3f3; */
+}
+
+/* APP */
+.App {
+  text-align: center;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 13.5px;
+}
+
+/* LOGIN & REGISTRATION */
+html .fullDiv {
+  background-color: #333;
+  height: 100vh;
+}
+.outerDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 700px */
+}
+.loginForm {
+  padding: 0 20px 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loginFormContent {
+  width: 480px;
+  background-color: #f0f0f0; /* #f0f0f0 e6e6e6*/
+  padding: 20px;
+  border-radius: 30px;
+}
+.loginTitle {
+  margin: 0;
+  padding: 15px 0 30px 0;
+}
+.signUpTextDiv {
+  margin: 5px 0 20px 0;
+}
+.signUpText {
+  font-size: 13px;
+}
+.linkText {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}
+.loginBtnDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loginBtn {
+  all: unset;
+  width: 280px;
+  margin: 35px 0 15px 0;
+}
+.loginTextInput {
+  width: 290px; /* btn + 10 */
+}
+.loginBottomInput {
+  margin-top: 8px;
+}
+/* REGISTRATION */
+.registerBtn {
+  all: unset; /* remove default styling */
+  margin: 35px 0 15px 0;
+  width: 280px;
+}
+@media (max-width: 600px) {
+  .loginFormContent {
+    width: 420px;
+  }
+}
+
+/* NAV BAR */
+.navBar {
+  background-color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+}
+.logoutBtn {
+  all: unset;
+  width: 70px;
+  background-color: white !important;
+  /* color: tomato; */
+  font-weight: bold;
+}
+.navBar div {
+  display: flex;
+  align-items: center;
+}
+.navTab {
+  text-decoration: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+.navTab.active {
+  color: tomato !important;
+  text-decoration: underline;
+}
+.userIdTitle {
+  margin: 0 20px;
+  font-size: 15px;
+  color: white;
+  font-style: italic;
+  font-weight: 100;
+}
+.logoutBtnDiv {
+  margin-left: auto;
+}
+.logoutBtnDiv button {
+  margin: 0 10px;
+}
+.logoutBtnDiv button:hover {
+  background-color: tomato !important;
+  transition: background-color 0.2s !important;
+  color: white;
+}
+@media (max-width: 765px) {
+  .navBar {
+    flex-direction: column;
+    padding: 10px;
+  }
+  .navBar div {
+    margin: 5px 0;
+  }
+  .navTab {
+    padding: 10px;
+  }
+  .logoutBtnDiv {
+    margin-left: 0;
+  }
+}
+
+/* ======================================== */
+/* INVENTORY LIST */
+.outerContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px 30px;
+}
+.itemContainer {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+}
+.itemContent {
+  background-color: rgb(242, 242, 233);
+  padding: 10px;
+  cursor: pointer;
+}
+.noRecordContainer {
+  margin: 50px 0;
+}
+.searchByOuterDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 30px; /* follow outerContainer's padding */
+}
+.searchByBtnDiv {
+  background-color: rgb(237, 237, 237);
+  display: flex;
+  width: fit-content;
+  border-radius: 10px;
+  gap: 6px;
+  padding: 6px;
+}
+.searchByBtn {
+  all: unset;
+  width: 187px;
+  padding: 8px;
+  border-radius: 10px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+.searchByBtn:hover {
+  background-color: rgb(255, 255, 255, 0.5) !important;
+  transition: background-color 0.2s !important;
+}
+.nonActiveTab {
+  background-color: rgb(255, 255, 255, 0.5) !important;
+}
+.activeTab {
+  color: tomato !important;
+  background-color: white !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15) !important;
+}
+.searchDiv {
+  margin: 30px 30px 0 30px; /* follow outerContainer's padding */
+}
+.searchInputOuter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: 424px; */
+}
+.searchInputDiv {
+  margin: 10px 70px;
+}
+
+/* SEARCH BAR */
+.searchInput {
+  width: 415px !important;
+}
+
+/* === SHARED COMPONENT === */
+.btn {
+  background-color: tomato;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: gainsboro !important;
+  transition: background-color 0.2s !important;
+}
+.btnTxt {
+}
+.textInput {
+  height: 30px;
+  border-radius: 10px;
+}
+/* ======================================== */
+
+/* Create Inventory */
+span {
+  color: red;
+  font-size: small;
+}
+
+.form {
+  /* padding: 20px; */
+  padding: 0 20px 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formContent {
+  width: 50vw;
+  background-color: #f0f0f0;
+  padding: 20px;
+  /* border-radius: 20px; */
+}
+
+.field {
+  display: flex;
+  margin: 20px 0 0 0;
+}
+
+.fieldLabel {
+  width: 30%;
+  text-align: end;
+  margin-right: 10px;
+}
+
+.submitBtn {
+  margin: 30px 0 15px 0;
+}
+
+.fieldInput {
+  flex-direction: column;
+  width: 70%;
+  text-align: start;
+}
+
+.input {
+  width: 60%;
+}
+
+.err {
+  margin-bottom: 10px;
+}
+
+.expiryDatePicker {
+  margin-top: 10px;
+}
+
+/* Item */
+.itemDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.itemCardContainer {
+  background-color: rgb(242, 242, 233);
+  width: 50vw;
+  padding: 20px;
+  text-align: start;
+}
+
+.itemCardInner {
+  padding: 0 20px;
+}
+
+.itemCard {
+  /* background-color: rgb(242, 242, 233); */
+  /* width: 420px; */
+  /* padding: 15px 30px; */
+  text-align: start;
+}
+
+.updateBtn,
+.deleteBtn,
+.cancelBtn {
+  margin: 10px 20px;
+}
+
+/* Checkout */
+.tableField {
+  padding: 5px 20px;
+  font-size: smaller; /* temporary */
+}
+
+.itemBlock {
+  min-height: 300px;
+}
+
+.mainBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  /* background-color: aliceblue; */
+  /* background-color: rgb(242, 242, 233); */
+}
+
+.fieldErrMsg {
+  margin-left: 32%;
+} /* ------------------------- */
+
+.inputDropdown .dropdown-list {
+  left: 0;
+}
+
+.inputDropdown .dropdown-list-item {
+  text-align: left;
+}
+
+.inputQty {
+  width: 36%;
+}
+
+.tableContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.tableWrapper {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  width: 98%;
+}
+
+table {
+  width: 80%;
+  max-width: 1200px;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+th {
+  font-size: 14px;
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f2f2f2;
+}
+
+.removeButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.removeButton:hover {
+  background-color: #c82333;
+}
+
+@media only screen and (max-width: 800px) {
+  /* th {
+    font-size: 14px;
+  }
+
+  tr {
+    font-size: 15px;
+  } */
+}
+
+/* temporary */
+.qrContainer {
+  /* display: flex; */
+  /* justify-content: center; */
+  /* background-color: red; */
+  /* padding: 20px 0 10px 0; */
+  padding: 5px;
+}
+
+.submitBtnPdf {
+  margin: 30px 0 0 0;
+}
+
+/* Searchable Dropdown */
+.dropdown {
+  position: relative;
+  color: #333;
+  cursor: default;
+}
+
+.dropdown .arrow {
+  border-color: #999 transparent transparent;
+  border-style: solid;
+  border-width: 5px 5px 0;
+  content: " ";
+  display: block;
+  height: 0;
+  margin-top: 0.3rem;
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  width: 0;
+}
+
+.dropdown .arrow.open {
+  border-color: transparent transparent #999;
+  border-width: 0 5px 5px;
+}
+
+.dropdown .selected-value input {
+  line-height: 1.4;
+  font-size: 1rem;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  box-sizing: border-box;
+  cursor: default;
+  outline: none;
+  /* padding: 8px 52px 8px 10px; */
+  transition: all 200ms ease;
+  /* width: 100%; */
+  min-width: 290px; /* temporary */
+  font-size: small;
+}
+
+.dropdown .options {
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+  font-size: 15px;
+}
+
+.dropdown .options.open {
+  display: block;
+}
+
+.dropdown .option {
+  box-sizing: border-box;
+  color: rgba(51, 51, 51, 0.8);
+  cursor: pointer;
+  display: block;
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown .option.selected,
+.dropdown .option:hover {
+  background-color: #f2f9fc;
+  color: #333;
+}
+
+.customerDetailsContainer {
+  margin: 30px 0;
+  background-color: "red";
+}
+
+/* QR Code */
+.qrCode {
+  height: 200px;
+}
