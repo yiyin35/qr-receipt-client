@@ -16,7 +16,9 @@ function Transaction() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/transactionHistory/byTrxId/${trxId}`)
+        .get(
+          `https://qr-receipt-ddba1cd2d186.herokuapp.com/transactionHistory/byTrxId/${trxId}`
+        )
         .then((response) => {
           setTrxObject(response.data);
           extractItems(response.data.purchasedItemInfo);
@@ -37,9 +39,12 @@ function Transaction() {
     }
 
     if (type === "time") {
-      const hours = dateObj.getHours();
-      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-      const seconds = String(dateObj.getSeconds()).padStart(2, "0");
+      // const hours = dateObj.getHours();
+      // const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+      // const seconds = String(dateObj.getSeconds()).padStart(2, "0");
+      const hours = dateObj.getUTCHours();
+      const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+      const seconds = String(dateObj.getUTCSeconds()).padStart(2, "0");
       const amPm = hours >= 12 ? "PM" : "AM";
       const formattedHours = (hours % 12 || 12).toString().padStart(2, "0");
       const time = `${formattedHours}:${minutes}:${seconds} ${amPm}`;
