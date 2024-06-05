@@ -13,7 +13,7 @@ function CreateAccount() {
   const [listOfUser, setListOfUser] = useState([]);
 
   useEffect(() => {
-    // if (!localStorage.getItem("accessToken")) navigate("/login");
+    if (!localStorage.getItem("accessToken")) navigate("/login");
   }, []);
 
   const initialValues = {
@@ -50,9 +50,13 @@ function CreateAccount() {
       } else {
         data.role = role;
         axios
-          .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/createAcc", data, {
-            headers: { accessToken: localStorage.getItem("accessToken") },
-          })
+          .post(
+            "https://qr-receipt-ddba1cd2d186.herokuapp.com/auth/createAcc",
+            data,
+            {
+              headers: { accessToken: localStorage.getItem("accessToken") },
+            }
+          )
           .then(() => {
             console.log(data); // check
             alert(

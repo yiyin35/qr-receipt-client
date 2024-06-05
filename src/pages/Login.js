@@ -79,12 +79,12 @@ function Login() {
                 </button>
               </div>
 
-              <div className="signUpTextDiv">
+              {/* <div className="signUpTextDiv">
                 <label className="signUpText">Don't have an account? </label>
                 <Link className="signUpText linkText" to="/registration">
                   Sign up
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
         ) : (
