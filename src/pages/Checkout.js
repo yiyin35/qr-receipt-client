@@ -286,7 +286,6 @@ function Checkout() {
     const minutes = String(gmtTime.getMinutes()).padStart(2, "0");
     const seconds = String(gmtTime.getSeconds()).padStart(2, "0");
     const time = `${hours}:${minutes}:${seconds}`;
-
     return time;
   };
 
