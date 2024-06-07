@@ -467,7 +467,7 @@ function Checkout() {
                 }
               )
               .then((response) => {
-                console.log(response);
+                // console.log(response);
                 alert(response.data); // data
               });
           });
@@ -545,7 +545,7 @@ function Checkout() {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {
-        console.log(response); // CHECK
+        // console.log(response); // CHECK
       });
   };
 
@@ -566,10 +566,10 @@ function Checkout() {
       if (selectedItem) {
         const updatedQuantity = selectedItem.quantity - listItem.totalQty;
 
-        console.log("selectedItem", selectedItem); // -check
-        console.log("selectedItem.quantity", selectedItem.quantity); // -check
-        console.log("listItem.totalQty", listItem.totalQty); // -check
-        console.log("updatedQuantity", updatedQuantity); // -check
+        // console.log("selectedItem", selectedItem); // -check
+        // console.log("selectedItem.quantity", selectedItem.quantity); // -check
+        // console.log("listItem.totalQty", listItem.totalQty); // -check
+        // console.log("updatedQuantity", updatedQuantity); // -check
 
         axios
           .put(
