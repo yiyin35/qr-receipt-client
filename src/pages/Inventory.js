@@ -137,7 +137,8 @@ function Inventory() {
                             >
                               <div className="itemImageCardDiv">
                                 <img
-                                  src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
+                                  // src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
+                                  src={value.image}
                                   alt={`${value.itemName}_Image`}
                                   className="itemImageCard"
                                 />
@@ -192,7 +193,8 @@ function Inventory() {
                                       <td className="itemImgField">
                                         <div className="tableImgDiv">
                                           <img
-                                            src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
+                                            // src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${value.image}`}
+                                            src={value.image}
                                             alt={`${value.itemName}_Image`}
                                             className="itemImg"
                                           />
@@ -220,7 +222,9 @@ function Inventory() {
                 </>
               ) : (
                 <>
-                  <div className="noMatchSearchResult">No matching results.</div>
+                  <div className="noMatchSearchResult">
+                    No matching results.
+                  </div>
                 </>
               )}
             </>

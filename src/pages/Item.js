@@ -15,7 +15,9 @@ function Item() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`)
+        .get(
+          `https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`
+        )
         .then((response) => {
           setItemObject(response.data);
         });
@@ -26,7 +28,7 @@ function Item() {
     navigate(`/updateItem/${id}`);
   };
 
-  const deleteItem = (id, imageName) => {
+  const deleteItem = (id, imageUrl) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this item?"
     );
@@ -36,26 +38,35 @@ function Item() {
     }
 
     axios
-      .delete(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${id}`, {
-        headers: { accessToken: localStorage.getItem("accessToken") },
-      })
+      .delete(
+        `https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${id}`,
+        {
+          headers: { accessToken: localStorage.getItem("accessToken") },
+          data: { imageUrl },
+        }
+      )
       .then((response) => {
         alert(response.data);
 
-        // remove image from server
-        axios
-          .delete(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/deleteImage/${imageName}`, {
-            headers: { accessToken: localStorage.getItem("accessToken") },
-          })
-          .then(() => {
-            console.log("Image deleted from server");
-          })
-          .catch((error) => {
-            console.error("Error deleting image from server:", error);
-          });
+        // // remove image from server
+        // axios
+        //   .delete(
+        //     `https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/deleteImage/${imageName}`,
+        //     {
+        //       headers: { accessToken: localStorage.getItem("accessToken") },
+        //     }
+        //   )
+        //   .then(() => {
+        //     console.log("Image deleted from server");
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error deleting image from server:", error);
+        //   });
 
-        // navigate("/inventoryList");
         navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error deleting item:", error);
       });
   };
 
@@ -87,7 +98,8 @@ function Item() {
                 <div className="itemImageOuterDiv">
                   <div className="itemImageDiv">
                     <img
-                      src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${itemObject.image}`}
+                      // src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${itemObject.image}`}
+                      src={itemObject.image}
                       alt={`${itemObject.itemName}_Image`}
                       className="itemImage"
                     />

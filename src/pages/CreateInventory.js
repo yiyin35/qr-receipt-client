@@ -47,7 +47,7 @@ function CreateInventory() {
     updatedBy: "",
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     let validBarcodeNum = !listOfInventory.some(
       (value) => data.barcodeNum === value.barcodeNum
     );
@@ -70,14 +70,21 @@ function CreateInventory() {
       formData.append(key, value); // Append other form data fields
     });
 
-    axios.post("https://qr-receipt-ddba1cd2d186.herokuapp.com/uploadImage", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        accessToken: localStorage.getItem("accessToken"),
-      },
-    });
+    const response = await axios.post(
+      "https://qr-receipt-ddba1cd2d186.herokuapp.com/uploadImage",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          accessToken: localStorage.getItem("accessToken"),
+        },
+      }
+    );
 
-    data.image = image.name;
+    // added
+    const imageUrl = response.data.imageUrl;
+    data.image = imageUrl;
+    // data.image = image.name;
     data.userId = authState.userId;
     data.updatedBy = authState.userId;
 
