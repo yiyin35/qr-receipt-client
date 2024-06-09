@@ -619,6 +619,15 @@ function Checkout() {
                       <div>
                         <div>
                           <div className="itemCard">
+                            <div className="subtitleDiv">
+                              <div className="subtitle">
+                                <label className="subtitleText">
+                                  ** Select an item by either its barcode number
+                                  or item name:
+                                </label>
+                              </div>
+                            </div>
+
                             {/* ---------- Searchable dropdown ---------- */}
                             <div className="field">
                               <label className="fieldLabel">
