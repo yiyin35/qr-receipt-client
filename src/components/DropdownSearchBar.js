@@ -55,6 +55,7 @@ const DropdownSearchBar = ({
             }}
             onClick={toggle}
             className="dropdownInput"
+            autoComplete="off"
           />
         </div>
         <div className={`arrow ${isOpen ? "open" : ""}`}></div>
