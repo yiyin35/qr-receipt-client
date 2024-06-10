@@ -130,7 +130,7 @@ function CreateInventory() {
             onSubmit={onSubmit}
             validationSchema={validationSchema}
           >
-            <Form className="loginForm">
+            <Form className="loginForm" autoComplete="off">
               <div className="createFormContent">
                 <h2 className="loginTitle">Create New Inventory</h2>
 

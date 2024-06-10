@@ -23,7 +23,9 @@ function UpdateItem() {
     if (!localStorage.getItem("accessToken")) navigate("/login");
     else {
       axios
-        .get(`https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`)
+        .get(
+          `https://qr-receipt-ddba1cd2d186.herokuapp.com/inventory/byBarcodeNum/${barcodeNum}`
+        )
         .then((response) => {
           setItemObject(response.data);
           setExpiryDate(response.data.expiryDate);
@@ -137,7 +139,7 @@ function UpdateItem() {
                 validationSchema={validationSchema}
               >
                 {({ handleChange }) => (
-                  <Form className="loginForm">
+                  <Form className="loginForm" autoComplete="off">
                     <div className="createFormContent">
                       <h2 className="loginTitle">Update Details</h2>
 

@@ -98,7 +98,7 @@ function CreateAccount() {
             validationSchema={validationSchema}
           >
             {({ errors, touched }) => (
-              <Form className="displayForm">
+              <Form className="displayForm" autoComplete="off">
                 <div className="createFormContent">
                   <h2 className="loginTitle">Create Account</h2>
 

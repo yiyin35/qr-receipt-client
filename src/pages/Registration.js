@@ -45,11 +45,13 @@ function Registration() {
         alert("User ID already exists. Please choose a different one.");
       } else {
         data.role = role;
-        axios.post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth", data).then(() => {
-          console.log(data); // check
-          alert("Your account has been created. Please log in to continue.");
-          navigate("/login");
-        });
+        axios
+          .post("https://qr-receipt-ddba1cd2d186.herokuapp.com/auth", data)
+          .then(() => {
+            console.log(data); // check
+            alert("Your account has been created. Please log in to continue.");
+            navigate("/login");
+          });
       }
     };
   };
@@ -75,7 +77,7 @@ function Registration() {
             validationSchema={validationSchema}
           >
             {({ errors, touched }) => (
-              <Form className="loginForm">
+              <Form className="loginForm" autoComplete="off">
                 <div className="loginFormContent">
                   <div className="appLogoDiv">
                     <img
