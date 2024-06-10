@@ -143,6 +143,21 @@ function UpdateItem() {
                     <div className="createFormContent">
                       <h2 className="loginTitle">Update Details</h2>
 
+                      {itemObject.image && (
+                        <div className="fieldRowDisplay">
+                          <div className="itemImageOuterDiv">
+                            <div className="itemImageDiv">
+                              <img
+                                // src={`https://qr-receipt-ddba1cd2d186.herokuapp.com/images/${itemObject.image}`}
+                                src={itemObject.image}
+                                alt={`${itemObject.itemName}_Image`}
+                                className="itemImage"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="field">
                         <label className="fieldLabel">Barcode Number: </label>
                         <div className="fieldInputCol">
